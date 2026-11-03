@@ -6,7 +6,7 @@ This guide records the current central integration behavior, proposes a status d
 
 The central terminal application collects the routing questionnaire, chooses a `module_id`, looks up that ID in `ModuleRegistry`, constructs a `ModuleInput`, executes the registered module, and displays a `ModuleResult`.
 
-`register_modules()` in `modules/placeholders.py` registers the six fixed module IDs. `plate_hx`, `regenerator`, `evaporator`, and `condenser` use adapter instances; the other two IDs use labelled placeholders. All real modules go through the same `registry.run(module_id, ModuleInput(...))` call. Registration and invocation are shared; input collection and native input/output translation remain module-specific.
+`register_modules()` in `modules/placeholders.py` registers the six fixed module IDs. `plate_hx`, `regenerator`, `evaporator`, `condenser`, and `bell_delaware_shell_and_tube_hx` use adapter instances; only `plate_fin_tube_hx` uses a labelled placeholder. All real modules go through the same `registry.run(module_id, ModuleInput(...))` call. Registration and invocation are shared; input collection and native input/output translation remain module-specific.
 
 ## Current common contract: implemented behavior
 
@@ -143,3 +143,7 @@ P02's `Forced-Circulation-or-Falling-Film` route offers the supplied falling-fil
 The adapter recursively populates the native input dataclasses, rejecting unknown keys, incorrect JSON types, and equipment mismatches. Omitted fields retain the upstream dataclass defaults; missing required fields are reported by native validation. Input values use native SI units and degrees Celsius, with no central conversions. Full example payloads and unit metadata are bundled.
 
 Native `ok` and `ok_with_warnings` map to common `success`. `invalid_input`, `not_converged`, and `failed` map to common `failed`; field issues or the native message appear in errors. Native failed engineering checks also appear in common warnings, so execution success does not imply every engineering check passed. `results.native_result` preserves the full native result; `native_status` and `effective_inputs` preserve status and defaults. Missing SciPy produces `unavailable`. No reports are written, no UI imports are needed, and source gaps remain visible in the native result.
+
+## Bell–Delaware integration (implemented)
+
+`BellDelawareAdapter` receives `bell_delaware_payload` containing an `inputs` object with hot/cold stream specifications, optional configuration, and assumed effectiveness. The core engine is notebook cell 2 unchanged. Stream property preparation preserves cells 1 and 3 except package imports/readiness prints. The adapter validates types and bounds, scopes custom property registration, captures native warnings, and preserves original results/report/history and effective inputs. Native infeasibility and nonconvergence map to common failed. See `modules/bell_delaware/README.md` for full provenance and limitations. Raw machine schemas are unchanged by human-facing abbreviation expansion.

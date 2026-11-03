@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import json
 from typing import Callable, Dict, Optional, Tuple
+from core.labels import expand
 
 
 OPTIONS: Dict[str, Tuple[Tuple[str, str], ...]] = {
@@ -255,6 +256,19 @@ class TerminalInputHandler:
                 continue
             return payload
 
+    def collect_bell_delaware_inputs(self) -> dict:
+        from modules.bell_delaware.adapter import load_case
+
+        self._print("\nBell–Delaware Shell and Tube HX process inputs")
+        while True:
+            filename = self._read("Bell–Delaware JSON case path: ").strip().strip('"')
+            try:
+                payload = load_case(filename)
+            except ValueError as exc:
+                self._print(str(exc))
+                continue
+            return {"bell_delaware_payload": payload, "case_path": filename}
+
     def collect_condenser_inputs(self) -> dict:
         """Choose a condenser calculation and load its native engineering data."""
         from modules.condenser.adapter import EQUIPMENT_OPTIONS, load_case
@@ -356,7 +370,7 @@ class TerminalInputHandler:
             return value
 
     def _read(self, prompt: str) -> str:
-        return (self._input_fn or input)(prompt)
+        return (self._input_fn or input)(expand(prompt))
 
     def _print(self, message: str) -> None:
-        (self._output_fn or print)(message)
+        (self._output_fn or print)(expand(message))

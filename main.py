@@ -6,6 +6,7 @@ from core.registry import ModuleRegistry
 from core.results import TerminalResultPresenter
 from core.selection import select_module
 from modules.placeholders import register_modules
+from core.labels import expand
 
 
 def build_registry() -> ModuleRegistry:
@@ -35,13 +36,13 @@ def main() -> None:
         decision = select_module(answers)
         module = registry.get(decision.module_id)
         print(f"\nRouting path: {decision.path_id}")
-        print(f"Solver route: {decision.solver_code}")
-        print(f"Selected module: {module.display_name}")
+        print(expand(f"Solver route: {decision.solver_code}"))
+        print(expand(f"Selected module: {module.display_name}"))
         if decision.subtype:
-            print(f"Sub-configuration: {decision.subtype}")
+            print(expand(f"Sub-configuration: {decision.subtype}"))
         if decision.alternative_solver_codes:
             alternatives = ", ".join(decision.alternative_solver_codes)
-            print(f"Alternative route(s): {alternatives}")
+            print(expand(f"Alternative route(s): {alternatives}"))
 
         if module.module_id == "regenerator":
             if decision.subtype == "Rotary-Ljungstrom":
@@ -68,6 +69,9 @@ def main() -> None:
             module_values["routing_answers"] = answers
         elif module.module_id == "condenser":
             module_values = input_handler.collect_condenser_inputs()
+            module_values["routing_answers"] = answers
+        elif module.module_id == "bell_delaware_shell_and_tube_hx":
+            module_values = input_handler.collect_bell_delaware_inputs()
             module_values["routing_answers"] = answers
         else:
             module_values = answers

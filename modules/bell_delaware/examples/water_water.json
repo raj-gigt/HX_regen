@@ -1,0 +1,35 @@
+{
+  "case_name": "Notebook water\u2013water property-bridge example",
+  "inputs": {
+    "hot": {
+      "label": "Hot water",
+      "fluid": "water",
+      "T_in": 80.0,
+      "T_out": 50.0,
+      "m": 20.0,
+      "P_bar": 2.0,
+      "Rf": 0.000176
+    },
+    "cold": {
+      "label": "Cold water",
+      "fluid": "water",
+      "T_in": 25.0,
+      "T_out": null,
+      "m": 40.0,
+      "P_bar": 2.0,
+      "Rf": 0.000176
+    },
+    "config": {
+      "hot_in_tubes": true,
+      "Uo_assumed": 1000.0,
+      "do_mm": 19.05,
+      "layout": 90,
+      "passes": 2,
+      "L": 4.88,
+      "head": "fixed",
+      "Bc": 0.25,
+      "lB_frac": 0.3
+    },
+    "eps_assumed": 0.85
+  }
+}

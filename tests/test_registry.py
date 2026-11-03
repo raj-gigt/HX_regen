@@ -18,6 +18,7 @@ from modules.placeholders import MODULES, PlaceholderModule, register_modules
 from modules.plate_hx.adapter import PlateHeatExchangerAdapter
 from modules.evaporator.adapter import EvaporatorAdapter, load_case
 from modules.condenser.adapter import CondenserAdapter
+from modules.bell_delaware.adapter import BellDelawareAdapter
 from modules.regenerator import fixed_bed_legacy
 from modules.regenerator.adapter import RegeneratorAdapter
 
@@ -113,7 +114,7 @@ class FailingModule:
 
 
 class IntegrationTests(unittest.TestCase):
-    def test_registry_contains_six_groups_four_real_adapters_and_two_placeholders(self):
+    def test_registry_contains_six_groups_five_real_adapters_and_one_placeholder(self):
         registry = ModuleRegistry()
         register_modules(registry)
         modules = tuple(registry.all())
@@ -124,10 +125,11 @@ class IntegrationTests(unittest.TestCase):
         self.assertIsInstance(by_id["regenerator"], RegeneratorAdapter)
         self.assertIsInstance(by_id["evaporator"], EvaporatorAdapter)
         self.assertIsInstance(by_id["condenser"], CondenserAdapter)
-        self.assertEqual(sum(isinstance(module, PlaceholderModule) for module in modules), 2)
+        self.assertIsInstance(by_id["bell_delaware_shell_and_tube_hx"], BellDelawareAdapter)
+        self.assertEqual(sum(isinstance(module, PlaceholderModule) for module in modules), 1)
         self.assertTrue(all(
             "[PLACEHOLDER]" in module.display_name
-            for module in modules if module.module_id not in {"plate_hx", "regenerator", "evaporator", "condenser"}
+            for module in modules if module.module_id not in {"plate_hx", "regenerator", "evaporator", "condenser", "bell_delaware_shell_and_tube_hx"}
         ))
 
     def test_all_eight_documented_evaporator_cases_execute_real_solvers(self):

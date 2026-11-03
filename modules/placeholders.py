@@ -5,6 +5,7 @@ from modules.plate_hx.adapter import PlateHeatExchangerAdapter
 from modules.regenerator.adapter import RegeneratorAdapter
 from modules.evaporator.adapter import EvaporatorAdapter
 from modules.condenser.adapter import CondenserAdapter
+from modules.bell_delaware.adapter import BellDelawareAdapter
 
 
 class PlaceholderModule:
@@ -47,5 +48,7 @@ def register_modules(registry) -> None:
             registry.register(EvaporatorAdapter())
         elif module_id == "condenser":
             registry.register(CondenserAdapter())
+        elif module_id == "bell_delaware_shell_and_tube_hx":
+            registry.register(BellDelawareAdapter())
         else:
             registry.register(PlaceholderModule(module_id, display_name))
