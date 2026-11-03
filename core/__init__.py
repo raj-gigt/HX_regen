@@ -1,0 +1,1 @@
+"""Shared application integration code."""

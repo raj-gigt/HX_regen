@@ -1,0 +1,1 @@
+"""Regenerator implementation adapter."""
