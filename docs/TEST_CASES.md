@@ -1,6 +1,23 @@
 # Integration Test-Case Specification
 
-This file specifies reproducible payloads for the two real modules. It separates tests already executed against the real source from proposed tests or cases whose expected engineering outcome needs confirmation. No solver source is changed by this specification.
+This file specifies reproducible payloads for the real modules. It separates tests already executed against the real source from proposed tests or cases whose expected engineering outcome needs confirmation. No solver source is changed by this specification.
+
+## Evaporator integration test evidence (2026-11-03)
+
+The four sizing cases in `modules/evaporator/examples/sizing/` and four rating cases in `modules/evaporator/examples/rating/` were run against their submitted source solvers through `EvaporatorAdapter`, without mocks. All sizing cases returned native calculation status `PRELIMINARY SIZING COMPLETE`; all rating cases returned `RATING COMPLETE`.
+
+| Case file | Solver | Observed result |
+|---|---|---|
+| `sizing/kettle_example_case.json` | K-type sizing | Preliminary sizing complete; no warnings |
+| `sizing/falling_film_example_case.json` | Falling-film sizing | Preliminary sizing complete; no warnings |
+| `sizing/horizontal_thermosyphon_example_case.json` | Horizontal thermosyphon sizing | Preliminary sizing complete; one native warning |
+| `sizing/vertical_thermosyphon_example_case.json` | Vertical thermosyphon sizing | Preliminary sizing complete; no warnings |
+| `rating/k_type_reboiler_rating_example.json` | K-type rating | Rating complete; one native warning; 128.028 kW |
+| `rating/falling_film_rating_example.json` | Falling-film rating | Rating complete; no warnings; 256.056 kW |
+| `rating/horizontal_thermosyphon_rating_example.json` | Horizontal thermosyphon rating | Rating complete; one native warning; 128.028 kW |
+| `rating/vertical_thermosyphon_rating_example.json` | Vertical thermosyphon rating | Rating complete; no warnings; 186.7833 kW |
+
+Automated coverage verifies all eight real executions, native warning/error preservation, a missing required input, mismatched selected mode/equipment, execution from a different working directory without output files, the complete P02 sizing and rating terminal flows and return to menu, and unchanged P01-P14 routing. The examples are smoke-test fixtures, not engineering-validated designs. The terminal does not invent their inputs. All 27 tests pass with no Streamlit or CoolProp installation.
 
 ## Evidence labels
 

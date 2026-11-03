@@ -6,7 +6,7 @@ This guide records the current central integration behavior, proposes a status d
 
 The central terminal application collects the routing questionnaire, chooses a `module_id`, looks up that ID in `ModuleRegistry`, constructs a `ModuleInput`, executes the registered module, and displays a `ModuleResult`.
 
-`register_modules()` in `modules/placeholders.py` registers the six fixed module IDs. `plate_hx` and `regenerator` use adapter instances; the other four IDs use labelled placeholders. Both real modules go through the same `registry.run(module_id, ModuleInput(...))` call. Registration and invocation are shared; input collection and native input/output translation remain module-specific.
+`register_modules()` in `modules/placeholders.py` registers the six fixed module IDs. `plate_hx`, `regenerator`, and `evaporator` use adapter instances; the other three IDs use labelled placeholders. All real modules go through the same `registry.run(module_id, ModuleInput(...))` call. Registration and invocation are shared; input collection and native input/output translation remain module-specific.
 
 ## Current common contract: implemented behavior
 
@@ -127,3 +127,11 @@ Please provide:
 7. A known-input example with expected output, existing tests, and known limitations.
 
 Do not rewrite the group's code to match the preferred callable before the software team reviews it. The software team will determine whether direct invocation or a small adapter is the least disruptive integration path.
+
+## Evaporator integration (implemented)
+
+The input handler asks for sizing or rating, an available equipment configuration, and the path to the group's matching JSON case. It does not ask for or supply engineering values. The adapter accepts `calculation_type`, `equipment_key`, and `evaporator_payload` in `ModuleInput.values`. The payload retains the group's `equipment_key`, optional `calculation_type`, `case_name`, and `inputs` fields; selection mismatches are reported as errors. Relative JSON paths are resolved from the launch directory.
+
+The eight source scripts and eight sample cases are bundled under `modules/evaporator/`; all source scripts match the submitted ZIP contents byte-for-byte. The adapter dispatches to `_compute` for sizing and `_compute_rating` for rating. It retains the complete native dictionary under `results.native_result`, copies native warnings, and reports native errors through common `errors`. No files are generated. Submitted Streamlit interfaces are not run; a temporary minimal import shim is used only if Streamlit is absent. CoolProp is not installed. The provided examples execute with their included values and the solvers' nominal property presets; other cases may rely on CoolProp property resolution.
+
+P02's `Forced-Circulation-or-Falling-Film` route offers the supplied falling-film solver because the submission contains no forced-circulation implementation. The other route offers kettle, horizontal thermosyphon, and vertical thermosyphon. Routing rules remain unchanged.

@@ -1,6 +1,6 @@
 # Phase 5B Integration Audit
 
-**Scope:** architecture, inputs/units, resources, and test evidence for the two real integrations. No solver, application, routing, or contract code was changed. The other four registered groups remain placeholders.
+**Scope:** architecture, inputs/units, resources, and test evidence. The initial Phase 5B review below predates the Evaporator delivery; the Phase 5A follow-up at the end records current status.
 
 ## Executive findings
 
@@ -147,3 +147,13 @@ The separately submitted `rotary_regenerator_design.py` is now copied unchanged 
 The rotary implementation requires NumPy; `requirements.txt` declares it. When missing, the rotary branch returns `unavailable` and does not run the fixed-bed solver as a substitute. NumPy was installed for verification, and a complete central P03 `Rotary-Ljungstrom` run returned native status `ok` / `Design found.` with target effectiveness 0.8; the solver also emitted its source warning about the selected matrix material's indicative temperature range. The terminal result retains the selected design and reports the number of diameter candidates rather than serializing every trial. Existing routing rules are unchanged. The engineering correspondence of the fixed-bed implementation to the `Fixed-Ceramic-Matrix` route still requires confirmation.
 
 No edits to these files were made in this audit.
+
+## Phase 5A follow-up: Evaporator integration audit (2026-11-03)
+
+- Verified four sizing and four rating scripts expose direct compute functions (`_compute` / `_compute_rating`) returning mappings with outputs, checks, warnings, errors, traces, and source registers. The compute functions do not call Streamlit.
+- The eight scripts are byte-for-byte identical to the source ZIP contents. Eight associated example cases are included in the package. The bundled compute paths do not require the nested chart archive or external data tables.
+- All eight sample cases were executed through the real solver: four report `PRELIMINARY SIZING COMPLETE` and four report `RATING COMPLETE`. Kettle and horizontal-thermosyphon rating cases retain their native warnings. CoolProp was absent; examples executed using the solver's nominal property presets.
+- The terminal collects calculation type, an available equipment configuration, and a matching JSON case path. It does not add engineering inputs, calculations, or defaults. P02's Forced-Circulation-or-Falling-Film option maps to the supplied falling-film solver only; no forced-circulation solver was submitted.
+- Native output is retained under `results.native_result`; native warnings/errors are copied to common warning/error fields. The adapter creates no output files. A test confirms execution from another working directory.
+- Streamlit and CoolProp were not installed or added to project requirements. The existing NumPy dependency is unchanged. Streamlit import is shimmed only when unavailable, and only the compute function is invoked.
+- Current registry: three real adapters (PHE, Regenerator, Evaporator) and three placeholders (Plate Fin Tube HX, Condenser, Bell-Delaware Shell and Tube HX). Six identifiers and routing decisions remain unchanged.

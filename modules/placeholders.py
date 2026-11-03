@@ -3,6 +3,7 @@
 from core.contracts import ModuleInput, ModuleResult
 from modules.plate_hx.adapter import PlateHeatExchangerAdapter
 from modules.regenerator.adapter import RegeneratorAdapter
+from modules.evaporator.adapter import EvaporatorAdapter
 
 
 class PlaceholderModule:
@@ -41,5 +42,7 @@ def register_modules(registry) -> None:
             registry.register(PlateHeatExchangerAdapter())
         elif module_id == "regenerator":
             registry.register(RegeneratorAdapter())
+        elif module_id == "evaporator":
+            registry.register(EvaporatorAdapter())
         else:
             registry.register(PlaceholderModule(module_id, display_name))

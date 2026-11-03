@@ -16,6 +16,7 @@ from core.registry import ModuleRegistry
 from core.selection import select_module
 from modules.placeholders import MODULES, PlaceholderModule, register_modules
 from modules.plate_hx.adapter import PlateHeatExchangerAdapter
+from modules.evaporator.adapter import EvaporatorAdapter, load_case
 from modules.regenerator import fixed_bed_legacy
 from modules.regenerator.adapter import RegeneratorAdapter
 
@@ -95,6 +96,13 @@ def phe_routing_answers():
     }
 
 
+def workspace_tempdir():
+    """Create test scratch space within the checkout, including on clean clones."""
+    temp_root = Path(__file__).resolve().parents[1] / "tmp"
+    temp_root.mkdir(exist_ok=True)
+    return TemporaryDirectory(dir=temp_root)
+
+
 class FailingModule:
     module_id = "condenser"
     display_name = "Failing [TEST MOCK]"
@@ -104,7 +112,7 @@ class FailingModule:
 
 
 class IntegrationTests(unittest.TestCase):
-    def test_registry_contains_six_groups_two_real_adapters_and_four_placeholders(self):
+    def test_registry_contains_six_groups_three_real_adapters_and_three_placeholders(self):
         registry = ModuleRegistry()
         register_modules(registry)
         modules = tuple(registry.all())
@@ -113,11 +121,124 @@ class IntegrationTests(unittest.TestCase):
         by_id = {module.module_id: module for module in modules}
         self.assertIsInstance(by_id["plate_hx"], PlateHeatExchangerAdapter)
         self.assertIsInstance(by_id["regenerator"], RegeneratorAdapter)
-        self.assertEqual(sum(isinstance(module, PlaceholderModule) for module in modules), 4)
+        self.assertIsInstance(by_id["evaporator"], EvaporatorAdapter)
+        self.assertEqual(sum(isinstance(module, PlaceholderModule) for module in modules), 3)
         self.assertTrue(all(
             "[PLACEHOLDER]" in module.display_name
-            for module in modules if module.module_id not in {"plate_hx", "regenerator"}
+            for module in modules if module.module_id not in {"plate_hx", "regenerator", "evaporator"}
         ))
+
+    def test_all_eight_documented_evaporator_cases_execute_real_solvers(self):
+        adapter = EvaporatorAdapter()
+        examples = Path(__file__).resolve().parents[1] / "modules" / "evaporator" / "examples"
+        expected = {
+            ("sizing", "kettle"): "PRELIMINARY SIZING COMPLETE",
+            ("sizing", "falling_film"): "PRELIMINARY SIZING COMPLETE",
+            ("sizing", "horizontal_thermosyphon"): "PRELIMINARY SIZING COMPLETE",
+            ("sizing", "vertical_thermosyphon"): "PRELIMINARY SIZING COMPLETE",
+            ("rating", "kettle"): "RATING COMPLETE",
+            ("rating", "falling_film"): "RATING COMPLETE",
+            ("rating", "horizontal_thermosyphon"): "RATING COMPLETE",
+            ("rating", "vertical_thermosyphon"): "RATING COMPLETE",
+        }
+        for mode in ("sizing", "rating"):
+            for case_file in sorted((examples / mode).glob("*.json")):
+                with self.subTest(mode=mode, case=case_file.name):
+                    payload = load_case(case_file)
+                    result = adapter.run(ModuleInput(values={
+                        "calculation_type": mode,
+                        "equipment_key": payload["equipment_key"],
+                        "evaporator_payload": payload,
+                    }))
+                    native = result.results["native_result"]
+                    self.assertEqual(result.status, "success", result.errors)
+                    self.assertEqual(native["outputs"]["Calculation status"], expected[(mode, payload["equipment_key"])])
+                    self.assertTrue(native["outputs"])
+                    self.assertEqual(result.warnings, tuple(native.get("warnings", ())))
+
+    def test_evaporator_required_input_errors_and_native_warnings_are_preserved(self):
+        base = Path(__file__).resolve().parents[1] / "modules" / "evaporator" / "examples"
+        payload = load_case(base / "sizing" / "kettle_example_case.json")
+        payload["inputs"]["mdot_feed"] = -1
+        rejected = EvaporatorAdapter().run(ModuleInput(values={
+            "calculation_type": "sizing", "equipment_key": "kettle", "evaporator_payload": payload,
+        }))
+        self.assertEqual(rejected.status, "failed")
+        self.assertTrue(rejected.errors)
+        self.assertEqual(rejected.errors, tuple(rejected.results["native_result"]["errors"]))
+
+        missing = load_case(base / "sizing" / "kettle_example_case.json")
+        del missing["inputs"]["mdot_feed"]
+        missing_result = EvaporatorAdapter().run(ModuleInput(values={
+            "calculation_type": "sizing", "equipment_key": "kettle", "evaporator_payload": missing,
+        }))
+        self.assertEqual(missing_result.status, "failed")
+        self.assertIn("mdot_feed", missing_result.errors[0])
+
+        rating = load_case(base / "rating" / "k_type_reboiler_rating_example.json")
+        warned = EvaporatorAdapter().run(ModuleInput(values={
+            "calculation_type": "rating", "equipment_key": "kettle", "evaporator_payload": rating,
+        }))
+        self.assertEqual(warned.status, "success")
+        self.assertTrue(warned.warnings)
+        self.assertEqual(warned.warnings, tuple(warned.results["native_result"]["warnings"]))
+
+    def test_evaporator_rejects_case_selection_mismatches(self):
+        examples = Path(__file__).resolve().parents[1] / "modules" / "evaporator" / "examples"
+        payload = load_case(examples / "sizing" / "kettle_example_case.json")
+        result = EvaporatorAdapter().run(ModuleInput(values={
+            "calculation_type": "rating", "equipment_key": "falling_film", "evaporator_payload": payload,
+        }))
+        self.assertEqual(result.status, "failed")
+        self.assertIn("does not match", result.errors[0])
+
+    def test_evaporator_runs_from_elsewhere_without_creating_files(self):
+        example = Path(__file__).resolve().parents[1] / "modules" / "evaporator" / "examples" / "rating" / "falling_film_rating_example.json"
+        payload = load_case(example)
+        with workspace_tempdir() as temp_dir:
+            original_cwd = os.getcwd()
+            try:
+                os.chdir(temp_dir)
+                result = EvaporatorAdapter().run(ModuleInput(values={
+                    "calculation_type": "rating", "equipment_key": "falling_film", "evaporator_payload": payload,
+                }))
+                files = list(Path(temp_dir).iterdir())
+            finally:
+                os.chdir(original_cwd)
+        self.assertEqual(result.status, "success", result.errors)
+        self.assertEqual(files, [])
+
+    def test_main_executes_a_real_evaporator_case_and_returns_to_menu(self):
+        output = StringIO()
+        user_entries = [
+            "1", "Q1-EVAP", "Q3-LOW-P", "Q4-MOD-T", "Q5-CLEAN", "Q6-LEAK-OK", "Q9-LOW-VISC",
+            "1", "1", "modules/evaporator/examples/sizing/kettle_example_case.json", "2",
+        ]
+        with patch("builtins.input", side_effect=user_entries):
+            with redirect_stdout(output):
+                main.main()
+        text = output.getvalue()
+        self.assertIn("Routing path: P02", text)
+        self.assertIn("Selected module: Evaporator", text)
+        self.assertIn('"calculation_type": "sizing"', text)
+        self.assertIn('"Calculation status": "PRELIMINARY SIZING COMPLETE"', text)
+        self.assertIn("Closing application.", text)
+
+    def test_main_executes_rating_case_for_forced_film_route(self):
+        output = StringIO()
+        user_entries = [
+            "1", "Q1-EVAP", "Q3-LOW-P", "Q4-MOD-T", "Q5-CLEAN", "Q6-LEAK-OK", "Q9-HIGH-VISC",
+            "2", "1", "modules/evaporator/examples/rating/falling_film_rating_example.json", "2",
+        ]
+        with patch("builtins.input", side_effect=user_entries):
+            with redirect_stdout(output):
+                main.main()
+        text = output.getvalue()
+        self.assertIn("Selected module: Evaporator", text)
+        self.assertIn("no Forced-circulation solver was supplied", text)
+        self.assertIn('"calculation_type": "rating"', text)
+        self.assertIn('"Rated duty kW": 256.056', text)
+        self.assertIn("Closing application.", text)
 
     def test_pdf_canonical_paths_p01_to_p14(self):
         for path_id, inputs, solver_code, module_id in path_cases():
@@ -280,7 +401,7 @@ class IntegrationTests(unittest.TestCase):
         adapter = PlateHeatExchangerAdapter()
         original_cwd = os.getcwd()
         output = StringIO()
-        with TemporaryDirectory(dir="tmp") as temp_dir:
+        with workspace_tempdir() as temp_dir:
             try:
                 os.chdir(temp_dir)
                 with redirect_stdout(output):
@@ -301,7 +422,7 @@ class IntegrationTests(unittest.TestCase):
 
     def test_main_executes_real_phe_from_documented_payload_path(self):
         output = StringIO()
-        with TemporaryDirectory(dir="tmp") as temp_dir:
+        with workspace_tempdir() as temp_dir:
             payload_path = Path(temp_dir) / "phe_input.json"
             payload_path.write_text(json.dumps(phe_example_payload()), encoding="utf-8")
             user_entries = [

@@ -219,7 +219,7 @@ class TerminalInputHandler:
             suffix = " (default)" if value == default else ""
             self._print(f"  [{index}] {label}{suffix}")
         while True:
-            raw = self._read("Choose an arrangement (Enter accepts default): ").strip()
+            raw = self._read("Choose an option (Enter accepts default): ").strip()
             if not raw:
                 return default
             try:
@@ -249,6 +249,52 @@ class TerminalInputHandler:
                 self._print("PHE payload 'routing' must be an object when provided.")
                 continue
             return payload
+
+    def collect_evaporator_inputs(self, route_subtype: str | None) -> dict:
+        """Collect mode/model selection and load the engineering group's JSON case."""
+        from modules.evaporator.adapter import load_case
+
+        self._print("\nEvaporator inputs")
+        self._print("The submitted solver accepts a documented JSON case; this program does not fill engineering values.")
+        mode = self._ask_choice_from_values(
+            "Calculation type", (("sizing", "Sizing"), ("rating", "Rating")), default="sizing"
+        )
+        if route_subtype == "Forced-Circulation-or-Falling-Film":
+            self._print("This route submission includes a Falling-film solver; no Forced-circulation solver was supplied.")
+            equipment_options = (("falling_film", "Falling-film evaporator"),)
+        else:
+            equipment_options = (
+                ("kettle", "K-type reboiler"),
+                ("horizontal_thermosyphon", "Horizontal thermosyphon"),
+                ("vertical_thermosyphon", "Vertical thermosyphon"),
+            )
+        equipment = self._ask_choice_from_values(
+            "Available equipment configuration", equipment_options, default=equipment_options[0][0]
+        )
+        while True:
+            filename = self._read("Path to the matching Evaporator JSON case: ").strip().strip('"')
+            try:
+                payload = load_case(filename)
+            except ValueError as exc:
+                self._print(str(exc))
+                continue
+            if payload.get("equipment_key") != equipment:
+                self._print("The JSON case equipment_key does not match the selected configuration.")
+                continue
+            case_mode = str(payload.get("calculation_type", "sizing")).lower()
+            if case_mode != mode:
+                self._print(f"The JSON case is for {case_mode}; select a matching case and calculation type.")
+                continue
+            if not isinstance(payload.get("inputs"), dict):
+                self._print("Evaporator JSON case must contain an 'inputs' object.")
+                continue
+            return {
+                "calculation_type": mode,
+                "equipment_key": equipment,
+                "evaporator_payload": payload,
+                "case_path": filename,
+                "selected_subtype": route_subtype,
+            }
 
     def _ask_choice(self, key: str, title: str) -> str:
         options = OPTIONS[key]
