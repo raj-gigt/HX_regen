@@ -1,0 +1,81 @@
+{
+  "case_name": "Upstream vertical_shell_tube example",
+  "equipment_key": "vertical_shell_tube",
+  "inputs": {
+    "variant": "in_tube_downflow",
+    "geometry": {
+      "D_o": 0.0254,
+      "t_wall": 0.00211,
+      "k_wall": 18.0,
+      "L": 4.0,
+      "pitch": 0.03175,
+      "layout": "90 deg square",
+      "material_group": "A: steel and steel alloys",
+      "shell_fouling": "yes",
+      "L_bb": 0.015,
+      "L_tb": 0.0008,
+      "L_sb": null,
+      "N_ss": 0,
+      "baffle_cut": 25.0,
+      "baffle_spacing_ratio": 0.4,
+      "baffle_spacing": null,
+      "n_tubes": null
+    },
+    "condensing": {
+      "name": "n-pentane",
+      "T_sat": 61.85,
+      "h_fg": 337300.0,
+      "rho_l": 582.9,
+      "rho_v": 6.359999999999999,
+      "mu_l": 0.000159,
+      "mu_v": 7.599999999999999e-06,
+      "k_l": 0.098,
+      "cp_l": 2520.0,
+      "sigma": 0.011300000000000001
+    },
+    "vapour": {
+      "m_dot": 5.0,
+      "x_in": 1.0,
+      "x_out": 0.0,
+      "pressure": 226999.9999999998,
+      "T_in": 70.0,
+      "T_out": 50.0,
+      "cp_v": 1960.0,
+      "k_v": 0.0193,
+      "condensation_curve": ""
+    },
+    "coolant_props": {
+      "name": "water",
+      "rho": 994.74,
+      "cp": 4178.0,
+      "mu": 0.0007588092940133025,
+      "k": 0.6210399999999999
+    },
+    "coolant": {
+      "T_in": 25.0,
+      "T_out": 40.0,
+      "m_dot": null,
+      "mu_wall": null
+    },
+    "fouling": {
+      "R_f_condensing": 0.0001,
+      "R_f_coolant": 0.0002
+    },
+    "limits": {
+      "dp_allow_condensing": 20000.0,
+      "dp_allow_coolant": 35000.0
+    },
+    "velocity": {
+      "u_vapour_max": null,
+      "u_coolant_max": null
+    },
+    "solver": {
+      "n_steps": 40,
+      "suction": "off",
+      "flooding_f2": 1.0,
+      "U_estimate": null,
+      "max_iterations": 60,
+      "n_tubes_max": 20000
+    }
+  }
+}

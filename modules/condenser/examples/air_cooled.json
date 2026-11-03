@@ -1,0 +1,89 @@
+{
+  "case_name": "Upstream air_cooled example",
+  "equipment_key": "air_cooled",
+  "inputs": {
+    "stream": {
+      "m_dot": 1.0,
+      "x_in": 0.85,
+      "x_out": 0.05,
+      "pressure": null,
+      "noncondensables": "no"
+    },
+    "fluid": {
+      "name": "n-pentane (HSB Ex. 16.2)",
+      "T_sat": 62.0,
+      "h_fg": 337300.0,
+      "rho_l": 582.9,
+      "rho_v": 6.36,
+      "mu_l": 0.000159,
+      "mu_v": 7.6e-06,
+      "k_l": 0.098,
+      "cp_l": 2520.0,
+      "sigma": 0.0113
+    },
+    "air": {
+      "T_in": 15.0,
+      "spec": "outlet_and_velocity_hsb_ex19_2",
+      "T_out": 40.0,
+      "m_dot": null,
+      "v_approach": 5.0
+    },
+    "air_props": {
+      "name": "air at 300 K (HSB Ex. 9.1)",
+      "rho": 1.161,
+      "cp": 1007.0,
+      "mu": 1.85e-05,
+      "k": 0.0263
+    },
+    "geometry": {
+      "D_r": 0.0254,
+      "D_i": 0.0186,
+      "D_f": 0.0572,
+      "w": 0.000406,
+      "s": 0.001903,
+      "p_1": 0.06033,
+      "p_2": 0.05207,
+      "k_tube": 60.0,
+      "k_fin": 206.0,
+      "n_rows": 4,
+      "n_t": 20,
+      "L": null,
+      "wall_treatment": "corbels_as_hsb_ex9_1",
+      "R_contact": 0.0,
+      "R_f_tube": 0.0
+    },
+    "tube_side": {
+      "tube_angle": 90.0,
+      "method": "boyko_kruzhilin",
+      "shear_term": "kosky_staub",
+      "suction_correction": "no"
+    },
+    "fan": {
+      "draft": "forced",
+      "efficiency": 0.65,
+      "dp_other": 0.0,
+      "fan_diameter": null,
+      "hub_diameter": null,
+      "n_fans": null,
+      "blade_control": "fixed",
+      "tip_speed": null,
+      "noise_design": "normal",
+      "noise_distance": null,
+      "dp_tower": null
+    },
+    "limits": {
+      "dp_allow_condensing": null,
+      "dp_allow_coolant": null
+    },
+    "winter": {
+      "T_air_min": null,
+      "T_freeze": null
+    },
+    "solver": {
+      "sizing": "tube_length",
+      "U_first_guess": 500.0,
+      "n_quality": 40,
+      "max_iterations": 50
+    }
+  }
+}

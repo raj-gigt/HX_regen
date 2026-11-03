@@ -17,6 +17,7 @@ from core.selection import select_module
 from modules.placeholders import MODULES, PlaceholderModule, register_modules
 from modules.plate_hx.adapter import PlateHeatExchangerAdapter
 from modules.evaporator.adapter import EvaporatorAdapter, load_case
+from modules.condenser.adapter import CondenserAdapter
 from modules.regenerator import fixed_bed_legacy
 from modules.regenerator.adapter import RegeneratorAdapter
 
@@ -112,7 +113,7 @@ class FailingModule:
 
 
 class IntegrationTests(unittest.TestCase):
-    def test_registry_contains_six_groups_three_real_adapters_and_three_placeholders(self):
+    def test_registry_contains_six_groups_four_real_adapters_and_two_placeholders(self):
         registry = ModuleRegistry()
         register_modules(registry)
         modules = tuple(registry.all())
@@ -122,10 +123,11 @@ class IntegrationTests(unittest.TestCase):
         self.assertIsInstance(by_id["plate_hx"], PlateHeatExchangerAdapter)
         self.assertIsInstance(by_id["regenerator"], RegeneratorAdapter)
         self.assertIsInstance(by_id["evaporator"], EvaporatorAdapter)
-        self.assertEqual(sum(isinstance(module, PlaceholderModule) for module in modules), 3)
+        self.assertIsInstance(by_id["condenser"], CondenserAdapter)
+        self.assertEqual(sum(isinstance(module, PlaceholderModule) for module in modules), 2)
         self.assertTrue(all(
             "[PLACEHOLDER]" in module.display_name
-            for module in modules if module.module_id not in {"plate_hx", "regenerator", "evaporator"}
+            for module in modules if module.module_id not in {"plate_hx", "regenerator", "evaporator", "condenser"}
         ))
 
     def test_all_eight_documented_evaporator_cases_execute_real_solvers(self):
@@ -282,10 +284,11 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(answers["Q1"], "Q1-COND")
         self.assertTrue(any("Invalid Q1 option" in message for message in messages))
 
-    def test_main_routes_executes_mock_and_returns_to_menu(self):
+    def test_main_routes_executes_condenser_and_returns_to_menu(self):
         output = StringIO()
         user_entries = [
-            "1", "Q1-COND", "Q3-LOW-P", "Q4-MOD-T", "Q5-CLEAN", "Q6-LEAK-OK", "2",
+            "1", "Q1-COND", "Q3-LOW-P", "Q4-MOD-T", "Q5-CLEAN", "Q6-LEAK-OK",
+            "2", str(Path(__file__).resolve().parents[1] / "modules/condenser/examples/plate.json"), "2",
         ]
         with patch("builtins.input", side_effect=user_entries):
             with redirect_stdout(output):
@@ -293,8 +296,8 @@ class IntegrationTests(unittest.TestCase):
         text = output.getvalue()
         self.assertIn("Routing path: P01", text)
         self.assertIn("Solver route: MOD-COND", text)
-        self.assertIn("Condenser [PLACEHOLDER]", text)
-        self.assertIn('"placeholder": true', text)
+        self.assertIn("Selected module: Condenser", text)
+        self.assertIn('"native_status": "ok_with_warnings"', text)
         self.assertIn("Heat Exchanger Routing", text)
         self.assertIn("Closing application.", text)
 
@@ -529,7 +532,8 @@ class IntegrationTests(unittest.TestCase):
         registry = ModuleRegistry()
         registry.register(FailingModule())
         output = StringIO()
-        user_entries = ["1", "Q1-COND", "Q3-LOW-P", "Q4-MOD-T", "Q5-CLEAN", "Q6-LEAK-OK", "2"]
+        user_entries = ["1", "Q1-COND", "Q3-LOW-P", "Q4-MOD-T", "Q5-CLEAN", "Q6-LEAK-OK",
+                        "2", str(Path(__file__).resolve().parents[1] / "modules/condenser/examples/plate.json"), "2"]
         with patch("main.build_registry", return_value=registry):
             with patch("builtins.input", side_effect=user_entries):
                 with redirect_stdout(output):

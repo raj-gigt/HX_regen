@@ -1,5 +1,7 @@
 """Terminal questionnaire based on the supplied routing specification (Q1-Q10)."""
 
+from __future__ import annotations
+
 import math
 import json
 from typing import Callable, Dict, Optional, Tuple
@@ -223,7 +225,10 @@ class TerminalInputHandler:
             if not raw:
                 return default
             try:
-                return options[int(raw) - 1][0]
+                index = int(raw)
+                if index < 1:
+                    raise ValueError
+                return options[index - 1][0]
             except (ValueError, IndexError):
                 self._print(f"Choose a number from 1 to {len(options)}.")
 
@@ -249,6 +254,26 @@ class TerminalInputHandler:
                 self._print("PHE payload 'routing' must be an object when provided.")
                 continue
             return payload
+
+    def collect_condenser_inputs(self) -> dict:
+        """Choose a condenser calculation and load its native engineering data."""
+        from modules.condenser.adapter import EQUIPMENT_OPTIONS, load_case
+
+        self._print("\nCondenser inputs")
+        self._print("Choose a calculation, then supply a matching JSON case with engineering inputs.")
+        equipment = self._ask_choice_from_values(
+            "Condenser calculation", EQUIPMENT_OPTIONS, default="vertical_shell_tube"
+        )
+        while True:
+            filename = self._read("Path to the matching Condenser JSON case: ").strip().strip('"')
+            try:
+                payload = load_case(filename)
+                if payload["equipment_key"] != equipment:
+                    raise ValueError("Condenser case equipment_key does not match the selected configuration.")
+            except ValueError as exc:
+                self._print(str(exc))
+                continue
+            return {"equipment_key": equipment, "condenser_payload": payload, "case_path": filename}
 
     def collect_evaporator_inputs(self, route_subtype: str | None) -> dict:
         """Collect mode/model selection and load the engineering group's JSON case."""

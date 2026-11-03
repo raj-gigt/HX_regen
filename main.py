@@ -66,6 +66,9 @@ def main() -> None:
         elif module.module_id == "evaporator":
             module_values = input_handler.collect_evaporator_inputs(decision.subtype)
             module_values["routing_answers"] = answers
+        elif module.module_id == "condenser":
+            module_values = input_handler.collect_condenser_inputs()
+            module_values["routing_answers"] = answers
         else:
             module_values = answers
         result = registry.run(module.module_id, ModuleInput(values=module_values))

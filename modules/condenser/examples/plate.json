@@ -1,0 +1,81 @@
+{
+  "case_name": "Upstream plate example",
+  "equipment_key": "plate",
+  "inputs": {
+    "geometry": {
+      "L": 1.0,
+      "W": 0.25,
+      "b": 0.005,
+      "t": 0.0006,
+      "k_plate": 17.0,
+      "port_d": 0.1,
+      "port_d_vapour": 0.15,
+      "area_basis": "projected",
+      "phi": 1.17,
+      "chevron_angle": 30.0,
+      "construction": "gasketed",
+      "gasket_material": "ethylene propylene rubber"
+    },
+    "correlation": {
+      "correlation_name": "HSB Ex. 8.1 and 8.2 fit to Fig. 8.8, small chevron plate (indicative)",
+      "C_h": 0.4,
+      "y": 0.64,
+      "n_pr": 0.4,
+      "K_p": 2.78,
+      "z": 0.18,
+      "re_min": 150.0,
+      "enhancement_h": 1.0,
+      "enhancement_f": 1.0,
+      "m_visc": null
+    },
+    "condensing": {
+      "name": "steam",
+      "T_sat": 100.0,
+      "h_fg": 2256700.0,
+      "rho_l": 958.3,
+      "rho_v": 0.597,
+      "mu_l": 0.00027753,
+      "mu_v": 1.255e-05,
+      "k_l": 0.679,
+      "cp_l": 4220.0,
+      "sigma": 0.05891
+    },
+    "vapour": {
+      "m_dot": 0.1,
+      "x_in": 1.0,
+      "x_out": 0.0,
+      "pressure": 101300.0,
+      "vapour_entry": "single",
+      "flammable_or_toxic": "no"
+    },
+    "coolant_props": {
+      "name": "water at 55 degC",
+      "rho": 985.2,
+      "cp": 4183.0,
+      "mu": 0.000505,
+      "k": 0.648
+    },
+    "coolant": {
+      "T_in": 30.0,
+      "T_out": 80.0,
+      "m_dot": null,
+      "assumed_effectiveness": null,
+      "passes": 1,
+      "direction": "countercurrent",
+      "mu_wall": null,
+      "pressure": null
+    },
+    "fouling": {
+      "R_f_condensing": 0.0,
+      "R_f_coolant": 0.0
+    },
+    "limits": {
+      "dp_allow_condensing": 10000.0,
+      "dp_allow_coolant": 100000.0
+    },
+    "solver": {
+      "n_zones": 20,
+      "max_iterations": 60
+    }
+  }
+}
