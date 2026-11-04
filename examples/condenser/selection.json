@@ -1,0 +1,29 @@
+{
+  "case_name": "Upstream selection example",
+  "equipment_key": "selection",
+  "inputs": {
+    "q1_coolant": "utility",
+    "q2_cooling_water": "yes",
+    "q3_plate_feasible": "no",
+    "q4_clean_close": null,
+    "q5_corrosive_dirty": "no",
+    "q6_multicomponent_total": null,
+    "q7_solids_countercurrent": null,
+    "q8_reflux": "no",
+    "q9_horizontal": "no",
+    "q10_high_p_corrosive": "no",
+    "q11_low_dp": "yes",
+    "q12_coolant_tube_side": "no",
+    "q13_counterflow": null,
+    "q14_wide_range_venting": null,
+    "data": {
+      "pressure_vapour": null,
+      "temperature_max": null,
+      "flammable_or_toxic": null,
+      "freezing_risk": null,
+      "fouling_coolant": null,
+      "high_pressure_coolant": null,
+      "low_pressure_vapour": null
+    }
+  }
+}

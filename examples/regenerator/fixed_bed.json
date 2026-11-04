@@ -1,0 +1,9 @@
+{
+  "case_name": "Air / cordierite honeycomb fixed-bed regenerator",
+  "selected_subtype": "Fixed-Ceramic-Matrix",
+  "fluid_choice": "1",
+  "mat_choice": "1",
+  "matrix_choice": "1",
+  "m_dot": 0.5,
+  "T_hot_in": 700.0
+}

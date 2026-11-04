@@ -1,0 +1,358 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "file": "plate_hx/water_sizing.json",
+      "module_id": "plate_hx",
+      "input_kind": "phe_payload",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-LIQ-LIQ",
+        "Q3": "Q3-MED-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-CLEAN",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q7": "Q7-TIGHT",
+        "Q9": "Q9-LOW-VISC",
+        "Q10": "Q10-COMPACT-CAPEX"
+      },
+      "expected_status": "success",
+      "expected_native_status": "DESIGNED",
+      "case_type": "calculation"
+    },
+    {
+      "file": "plate_hx/water_rating.json",
+      "module_id": "plate_hx",
+      "input_kind": "phe_payload",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-LIQ-LIQ",
+        "Q3": "Q3-MED-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-CLEAN",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q7": "Q7-TIGHT",
+        "Q9": "Q9-LOW-VISC",
+        "Q10": "Q10-COMPACT-CAPEX"
+      },
+      "expected_status": "success",
+      "expected_native_status": "RATED",
+      "case_type": "calculation"
+    },
+    {
+      "file": "phe_elevated_temperature.json",
+      "module_id": "plate_hx",
+      "input_kind": "phe_payload",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-LIQ-LIQ",
+        "Q3": "Q3-MED-P",
+        "Q4": "Q4-ELEV-T",
+        "Q5": "Q5-CLEAN",
+        "Q6": "Q6-LEAK-OK",
+        "Q7": "Q7-TIGHT",
+        "Q9": "Q9-LOW-VISC",
+        "Q10": "Q10-COMPACT-CAPEX"
+      },
+      "expected_status": "success",
+      "expected_native_status": "DESIGNED",
+      "case_type": "calculation"
+    },
+    {
+      "file": "condenser/air_cooled.json",
+      "module_id": "condenser",
+      "input_kind": "condenser_payload",
+      "routing_answers": {
+        "Q1": "Q1-COND",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-HAZ"
+      },
+      "expected_status": "success",
+      "expected_native_status": "ok_with_warnings",
+      "case_type": "calculation"
+    },
+    {
+      "file": "condenser/direct_contact.json",
+      "module_id": "condenser",
+      "input_kind": "condenser_payload",
+      "routing_answers": {
+        "Q1": "Q1-COND",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-LEAK-OK"
+      },
+      "expected_status": "success",
+      "expected_native_status": "ok_with_warnings",
+      "case_type": "calculation"
+    },
+    {
+      "file": "condenser/plate.json",
+      "module_id": "condenser",
+      "input_kind": "condenser_payload",
+      "routing_answers": {
+        "Q1": "Q1-COND",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-HAZ"
+      },
+      "expected_status": "success",
+      "expected_native_status": "ok_with_warnings",
+      "case_type": "calculation"
+    },
+    {
+      "file": "condenser/selection.json",
+      "module_id": "condenser",
+      "input_kind": "condenser_payload",
+      "routing_answers": {
+        "Q1": "Q1-COND",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-HAZ"
+      },
+      "expected_status": "success",
+      "expected_native_status": "ok",
+      "case_type": "calculation"
+    },
+    {
+      "file": "condenser/vertical_shell_tube.json",
+      "module_id": "condenser",
+      "input_kind": "condenser_payload",
+      "routing_answers": {
+        "Q1": "Q1-COND",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-HAZ"
+      },
+      "expected_status": "success",
+      "expected_native_status": "ok_with_warnings",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/sizing/falling_film.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-HEAVY",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "PRELIMINARY SIZING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/sizing/horizontal_thermosyphon.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "PRELIMINARY SIZING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/sizing/kettle.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "PRELIMINARY SIZING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/sizing/vertical_thermosyphon.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "PRELIMINARY SIZING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/rating/falling_film.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-HEAVY",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "RATING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/rating/horizontal_thermosyphon.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "RATING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/rating/kettle.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "RATING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "evaporator/rating/vertical_thermosyphon.json",
+      "module_id": "evaporator",
+      "input_kind": "evaporator_payload",
+      "routing_answers": {
+        "Q1": "Q1-EVAP",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-ZERO-LEAK-STD",
+        "Q9": "Q9-LOW-VISC"
+      },
+      "expected_status": "success",
+      "expected_native_status": "RATING COMPLETE",
+      "case_type": "calculation"
+    },
+    {
+      "file": "regenerator/fixed_bed.json",
+      "module_id": "regenerator",
+      "input_kind": "module_values",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-GAS-GAS",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-VHIGH-T",
+        "Q5": "Q5-CLEAN",
+        "Q6": "Q6-LEAK-OK",
+        "Q7": "Q7-WIDE",
+        "Q10": "Q10-COMPACT-CAPEX"
+      },
+      "expected_status": "success",
+      "expected_native_status": "OPTIMUM DESIGN FOUND",
+      "case_type": "calculation"
+    },
+    {
+      "file": "regenerator/rotary.json",
+      "module_id": "regenerator",
+      "input_kind": "module_values",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-GAS-GAS",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-HIGH-T",
+        "Q5": "Q5-CLEAN",
+        "Q6": "Q6-LEAK-OK",
+        "Q7": "Q7-WIDE",
+        "Q10": "Q10-COMPACT-CAPEX"
+      },
+      "expected_status": "success",
+      "expected_native_status": "ok",
+      "case_type": "calculation"
+    },
+    {
+      "file": "bell_delaware/water_water_feasible.json",
+      "module_id": "bell_delaware_shell_and_tube_hx",
+      "input_kind": "bell_delaware_payload",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-LIQ-LIQ",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-LEAK-OK",
+        "Q7": "Q7-WIDE",
+        "Q9": "Q9-LOW-VISC",
+        "Q10": "Q10-ROBUST-CLEAN"
+      },
+      "expected_status": "success",
+      "expected_native_status": "designed",
+      "case_type": "calculation"
+    },
+    {
+      "file": "bell_delaware/original_benchmark_infeasible.json",
+      "module_id": "bell_delaware_shell_and_tube_hx",
+      "input_kind": "bell_delaware_payload",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-LIQ-LIQ",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-MODERATE",
+        "Q6": "Q6-LEAK-OK",
+        "Q7": "Q7-WIDE",
+        "Q9": "Q9-LOW-VISC",
+        "Q10": "Q10-ROBUST-CLEAN"
+      },
+      "expected_status": "failed",
+      "expected_native_status": "infeasible",
+      "case_type": "diagnostic"
+    },
+    {
+      "file": "plate_fin_tube_hx/routing_only.json",
+      "module_id": "plate_fin_tube_hx",
+      "input_kind": "routing_only",
+      "routing_answers": {
+        "Q1": "Q1-SENSIBLE",
+        "Q2": "Q2-GAS-LIQ",
+        "Q3": "Q3-LOW-P",
+        "Q4": "Q4-MOD-T",
+        "Q5": "Q5-CLEAN",
+        "Q6": "Q6-LEAK-OK",
+        "Q7": "Q7-WIDE",
+        "Q8": "Q8-LOWP-GAS-OR-AIR",
+        "Q10": "Q10-COMPACT-CAPEX"
+      },
+      "expected_status": "routing_only",
+      "expected_native_status": null,
+      "case_type": "routing_only"
+    }
+  ]
+}

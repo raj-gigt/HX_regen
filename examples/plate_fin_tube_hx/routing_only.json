@@ -1,0 +1,16 @@
+{
+  "case_name": "Fin-fan routing demonstration only",
+  "case_type": "routing_only",
+  "routing_answers": {
+    "Q1": "Q1-SENSIBLE",
+    "Q2": "Q2-GAS-LIQ",
+    "Q3": "Q3-LOW-P",
+    "Q4": "Q4-MOD-T",
+    "Q5": "Q5-CLEAN",
+    "Q6": "Q6-LEAK-OK",
+    "Q7": "Q7-WIDE",
+    "Q8": "Q8-LOWP-GAS-OR-AIR",
+    "Q10": "Q10-COMPACT-CAPEX"
+  },
+  "limitation": "No engineering solver is integrated for this group. This file tests selection only; no sizing or rating is performed."
+}

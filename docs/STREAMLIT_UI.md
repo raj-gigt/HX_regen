@@ -7,11 +7,23 @@ Launch from the repository root with `python -m streamlit run streamlit_app.py` 
 1. Choose an example workflow in the sidebar and click **Use workflow** to load its routing answers. These are editable examples, not engineering recommendations for an unknown process.
 2. Review the routing questions. Conditional questions and the resulting module/subtype use the same selection rules as the terminal application.
 3. Select the calculator configuration and sizing/rating mode where available.
-4. Choose **Example values**, **Blank form**, or **Upload JSON**, then edit the form. Units are included in the labels, with native field help for optional inputs.
+4. Choose **Example values**, **Blank form**, or **JSON files**, then edit the inputs. Units are included in the labels, with native field help for optional inputs. Regenerator offers its existing manual form or JSON files.
 5. Click **Calculate**. No calculation is triggered simply by changing routing or input-source widgets.
 6. Review Summary, Checks & warnings, Calculation details, and Download. The input and result JSON files support repeatable cases; the summary CSV contains the visible scalar output rows.
 
-Forms collect edits until Calculate is submitted. After changing routing, configuration, or case source, previous results are hidden until a new matching calculation is run. **Use workflow** resets the example form through a new form revision. Browser refresh ends the in-memory session; download cases/results you want to retain.
+Manual forms collect edits until Calculate is submitted. JSON side-panel edits commit immediately when a value is entered/blurred, but the solver still runs only when Calculate is clicked. After changing committed values, routing, configuration, or case source, previous results are hidden until a new matching calculation is run. **Use workflow** resets the example form through a new form revision. Browser refresh ends the in-memory session; download cases/results you want to retain.
+
+## JSON files and side-panel editor
+
+Selecting **JSON files** shows a picker of all 20 calculator input cases in the central `examples/` folder and its subfolders. Selecting a case automatically sets its routing, calculator, equipment configuration, sizing/rating mode, and regenerator subtype. The manifest, test report, and fin-tube routing-only file are excluded because they are not calculator inputs. Files added to that folder are discovered automatically; updating the manifest is not required for the picker. Diagnostic cases retain their visible warning label.
+
+**Upload more JSON files** accepts multiple files, including new cases uploaded later. Supported uploads join the same session-local library. Selecting an uploaded case also switches to its matching calculator and configuration. Duplicate file contents are not added twice. Original uploads are retained so Reload works even after edits.
+
+The sidebar opens a **JSON parameter editor** for the selected file. **Parameters** provides the existing labelled/unit-aware widgets in one column. **JSON text** allows editing the entire document, including additional fields, and validates committed text before enabling calculation. The main pane has a live input preview and a download of the edited case. Switching between cases preserves each draft within the session.
+
+**Reload original JSON** discards the selected case's edits, resets its widgets, and clears its previous result. Bundled files are read again from disk; uploaded files reload from their original bytes. Edits affect only the current calculation draft and never overwrite original files. Download an edited case to keep it after the session ends. Empty optional values retain each solver's existing handling; a cleared rating plate count blocks calculation rather than silently switching into sizing.
+
+The calculation button, routing, solver adapters, warnings/checks, and result exports are shared with the existing manual flow. JSON editing is also supported for both regenerator subtypes using their existing adapter input format.
 
 ## Input behaviour
 
@@ -35,3 +47,5 @@ Common execution status and native solver status are both preserved. Infeasibili
 ## Bell–Delaware and terminology
 
 A fifth solver group now exposes the supplied Bell–Delaware notebook through grouped hot/cold stream, custom property, geometry, and design-control forms. The example default is a feasible configuration selected by the native sweep; the original notebook benchmark is retained as a separate infeasible diagnostic case. Native flags determine success versus infeasibility/nonconvergence. The sidebar glossary and shared human-label formatter expand engineering abbreviations in forms, routing, reports, and result tables. Internal field names and raw JSON downloads preserve their original contracts.
+
+The sidebar workflow **Falling-film evaporator rating** opens the supplied falling-film solver directly in Rating mode. Its native code and supplied calculation/chart notes live in `modules/evaporator/rating/`; manual entry, bundled/uploaded JSON, sidebar editing, reload, and results exports share the existing flow.

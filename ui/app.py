@@ -16,8 +16,9 @@ from core.selection import select_module
 from core.labels import expand, ABBREVIATIONS
 from main import build_registry
 from modules.condenser.adapter import EQUIPMENT_OPTIONS
+from ui.json_cases import json_case_editor
 from ui.inputs import (ROOT, InputField, build_payload, condenser_fields, evaporator_fields, bell_fields,
-                       flatten, format_value, parse_upload, phe_fields)
+                       flatten, format_value, phe_fields)
 
 EXECUTION_LOCK = Lock()
 
@@ -26,6 +27,7 @@ PRESETS = {
     "Plate heat exchanger": {"Q1": "Q1-SENSIBLE", "Q2": "Q2-LIQ-LIQ", "Q3": "Q3-MED-P", "Q4": "Q4-MOD-T", "Q5": "Q5-CLEAN", "Q6": "Q6-ZERO-LEAK-STD", "Q7": "Q7-MODERATE", "Q9": "Q9-LOW-VISC", "Q10": "Q10-COMPACT-CAPEX"},
     "Condenser": {"Q1": "Q1-COND", "Q3": "Q3-LOW-P", "Q4": "Q4-MOD-T", "Q5": "Q5-MODERATE", "Q6": "Q6-ZERO-LEAK-HAZ"},
     "Evaporator": {"Q1": "Q1-EVAP", "Q3": "Q3-LOW-P", "Q4": "Q4-MOD-T", "Q5": "Q5-CLEAN", "Q6": "Q6-LEAK-OK", "Q9": "Q9-LOW-VISC"},
+    "Falling-film evaporator rating": {"Q1": "Q1-EVAP", "Q3": "Q3-LOW-P", "Q4": "Q4-MOD-T", "Q5": "Q5-HEAVY", "Q6": "Q6-ZERO-LEAK-STD", "Q9": "Q9-LOW-VISC"},
     "Rotary regenerator": {"Q1": "Q1-SENSIBLE", "Q2": "Q2-GAS-GAS", "Q3": "Q3-LOW-P", "Q4": "Q4-HIGH-T", "Q5": "Q5-CLEAN", "Q6": "Q6-LEAK-OK", "Q7": "Q7-MODERATE", "Q10": "Q10-COMPACT-CAPEX"},
     "Fixed-bed regenerator": {"Q1": "Q1-SENSIBLE", "Q2": "Q2-GAS-GAS", "Q3": "Q3-LOW-P", "Q4": "Q4-VHIGH-T", "Q5": "Q5-CLEAN", "Q6": "Q6-LEAK-OK", "Q7": "Q7-MODERATE", "Q10": "Q10-COMPACT-CAPEX"},
 }
@@ -38,6 +40,8 @@ QUESTION_LABELS = {
 
 
 def seed_route(name):
+    if name == "Falling-film evaporator rating":
+        st.session_state["evap_mode"] = "rating"
     for key, options in OPTIONS.items():
         st.session_state["route_" + key] = PRESETS[name].get(key, options[0][0])
     st.session_state.pop("calculation", None)
@@ -134,7 +138,7 @@ def example_case(module_id, equipment=None, mode="sizing"):
     return payload
 
 
-def solver_form(decision):
+def solver_form(decision, editor_slot):
     """Return payload values and submit state; never execute a calculator on reruns."""
     module_id = decision.module_id
     equipment, mode = None, "sizing"
@@ -155,24 +159,10 @@ def solver_form(decision):
         mode = st.radio("Calculation mode", ["sizing", "rating"], format_func=str.title, horizontal=True, key="phe_mode")
         st.caption("Sizing finds a new design; rating calculates the performance of an existing plate count.")
     context = f"{module_id}:{equipment}:{mode}:{st.session_state.get('revision', 0)}"
-    source = st.radio("Starting values", ["Example values", "Blank form", "Upload JSON"], format_func=expand, horizontal=True, key="source:" + context)
+    source = st.radio("Starting values", ["Example values", "Blank form", "JSON files"], format_func=expand, horizontal=True, key="source:" + context)
+    if source == "JSON files":
+        return json_case_editor(module_id, equipment, mode, decision.subtype, context, editor_slot, widget)
     payload = example_case(module_id, equipment, mode)
-    if source == "Upload JSON":
-        uploaded = st.file_uploader("Import a case to edit", type="json", key="upload:" + context)
-        if uploaded is None:
-            st.info("Choose a JSON file, or select Example values to enter data without a file.")
-            return None, False
-        raw = uploaded.getvalue()
-        try:
-            payload = parse_upload(raw, module_id, equipment, mode if module_id == "evaporator" else None)
-            if module_id == "plate_hx":
-                has_count = payload["process"].get("plate", {}).get("N") is not None
-                if has_count != (mode == "rating"):
-                    raise ValueError("Choose Rating for a case with plate.N, or Sizing for a case without it.")
-        except (ValueError, UnicodeError) as exc:
-            st.error(str(exc))
-            return None, False
-        context += ":" + hashlib.sha256(raw).hexdigest()[:12]
     if module_id == "condenser":
         fields = condenser_fields(equipment, payload)
     elif module_id == "bell_delaware_shell_and_tube_hx":
@@ -211,7 +201,12 @@ def solver_form(decision):
     return {"equipment_key": equipment, "condenser_payload": payload}, submitted
 
 
-def regenerator_form(decision, module):
+def regenerator_form(decision, module, editor_slot):
+    context = f"regen:{decision.subtype}:{st.session_state.get('revision', 0)}"
+    source = st.radio("Starting values", ["Manual values", "JSON files"], format_func=expand,
+                      horizontal=True, key="source:" + context)
+    if source == "JSON files":
+        return json_case_editor("regenerator", None, "sizing", decision.subtype, context, editor_slot, widget)
     fields = []
     if decision.subtype == "Rotary-Ljungstrom":
         solver = module.rotary_module
@@ -356,6 +351,7 @@ def run():
         st.caption("Heat exchanger selection & calculation")
         scenario = st.selectbox("Example workflow", list(PRESETS), key="scenario")
         st.button("Use workflow", on_click=seed_route, args=(scenario,), width="stretch")
+        editor_slot = st.container()
         st.divider()
         st.markdown("**Your workflow**\n\n1. Define the duty\n2. Edit process inputs\n3. Calculate and review")
         st.caption("Five calculator groups are integrated. The fin-tube group awaits its solver.")
@@ -380,9 +376,9 @@ def run():
     st.subheader("2 · Enter process data")
     try:
         if decision.module_id == "regenerator":
-            values, submitted = regenerator_form(decision, module)
+            values, submitted = regenerator_form(decision, module, editor_slot)
         else:
-            values, submitted = solver_form(decision)
+            values, submitted = solver_form(decision, editor_slot)
     except (ImportError, ValueError, KeyError) as exc:
         st.error(f"Could not prepare this calculator: {exc}")
         return

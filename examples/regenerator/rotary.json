@@ -1,0 +1,17 @@
+{
+  "case_name": "Flue-gas / air rotary regenerator at 550 \u00b0C",
+  "selected_subtype": "Rotary-Ljungstrom",
+  "rotary_inputs": {
+    "matrix_type": "hexagonal",
+    "option_index": 1,
+    "T_h_in_C": 550.0,
+    "T_c_in_C": 150.0,
+    "m_h": 1.0,
+    "m_c": 0.95,
+    "fluid_h": "flue_gas",
+    "fluid_c": "air",
+    "P_h_in_bar_a": 1.1,
+    "P_c_in_bar_a": 4.0,
+    "flow": "counter"
+  }
+}

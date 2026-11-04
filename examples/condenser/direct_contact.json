@@ -1,0 +1,76 @@
+{
+  "case_name": "Upstream direct_contact example",
+  "equipment_key": "direct_contact",
+  "inputs": {
+    "condenser_type": "spray",
+    "coolant_relation": "same_fluid",
+    "vapour_solids": null,
+    "multicomponent_total": null,
+    "column_area": null,
+    "pressure": null,
+    "barometric": null,
+    "p_atm": null,
+    "vapour": {
+      "name": "steam",
+      "m_vapour": null,
+      "T_sat": 100.0,
+      "h_fg": 2257000.0,
+      "rho_v": 0.596,
+      "mu_v": 1.2e-05,
+      "cp_v": 1930.0,
+      "T_in": null,
+      "rho_cond": null,
+      "cp_cond": null
+    },
+    "coolant": {
+      "name": "water at 92 degC",
+      "m_coolant": 1.0,
+      "T_in": 85.0,
+      "T_out": null,
+      "utilization": 0.95,
+      "rho": 963.0,
+      "cp": 4209.0,
+      "k": 0.677,
+      "mu": null
+    },
+    "gas": {
+      "m_gas": null,
+      "M_gas": null,
+      "M_vapour": null,
+      "p_v_vent": null,
+      "T_vent": null,
+      "cp_gas": null,
+      "soluble": null
+    },
+    "spray": {
+      "drop_diameter": 0.001,
+      "injection_velocity": 5.0,
+      "smallest_drop": null,
+      "velocity_fraction": null,
+      "cd_smallest": null
+    },
+    "film": {
+      "liquid_dimension": null,
+      "liquid_velocity": null,
+      "fan_angle": null,
+      "fan_nozzles": null,
+      "baffle_spacing": null
+    },
+    "packed": {
+      "packing_size": null,
+      "voidage": null,
+      "specific_area": null,
+      "U_v": null,
+      "velocity_limit": 4.0
+    },
+    "bubble": {
+      "bubble_diameter": null,
+      "T_pool": null,
+      "drag_coefficient": 0.5,
+      "rise_velocity": null,
+      "release_frequency": null,
+      "nozzle_spacing": null,
+      "beta_final": null
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "process": {
+    "hot": {
+      "name": "water",
+      "M": 10.0,
+      "T_in": 95.0,
+      "rho": 985.2,
+      "cp": 4183.0,
+      "k": 0.648,
+      "mu": 0.000505,
+      "dp_allow": 50000.0,
+      "Rf": 0.0
+    },
+    "cold": {
+      "name": "water",
+      "M": 5.0,
+      "T_in": 15.0,
+      "T_out": 90.0,
+      "rho": 985.2,
+      "cp": 4183.0,
+      "k": 0.648,
+      "mu": 0.000505,
+      "dp_allow": 50000.0,
+      "Rf": 0.0
+    },
+    "plate": {
+      "L": 1.0,
+      "W": 0.25,
+      "b": 0.005,
+      "t": 0.0006,
+      "k_w": 17.0,
+      "beta": 30.0,
+      "d_port": 0.1,
+      "construction": "gasketed",
+      "gasket": "EPDM"
+    }
+  },
+  "routing": {
+    "module": "MOD-PHE",
+    "Q1": "Q1-SENSIBLE",
+    "Q2": "Q2-LIQ-LIQ",
+    "Q3": "Q3-MED-P",
+    "Q4": "Q4-MOD-T",
+    "Q5": "Q5-CLEAN",
+    "Q6": "Q6-ZERO-LEAK-STD",
+    "Q7": "Q7-TIGHT",
+    "Q9": "Q9-LOW-VISC",
+    "Q10": "Q10-COMPACT-CAPEX"
+  },
+  "case_name": "Water\u2013water plate heat exchanger sizing"
+}

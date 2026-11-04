@@ -10,11 +10,15 @@ python -m pip install -r requirements.txt
 python -m streamlit run streamlit_app.py
 ```
 
-Open `http://localhost:8501`. Choose an example workflow in the sidebar and click **Use workflow**, review the routing questions, edit process values, and click **Calculate**. You can start with example values, a blank form, or an uploaded JSON case. Optional numeric fields can be cleared; their native calculation/default behaviour is described in field help. Calculators only run when submitted.
+Open `http://localhost:8501`. Choose an example workflow in the sidebar and click **Use workflow**, review the routing questions, edit process values, and click **Calculate**. You can start with example values, a blank form, or **JSON files**. JSON mode offers bundled cases, multiple uploads, a live side-panel parameter/text editor, and **Reload original JSON**. Edits stay in the session until downloaded; source files are not overwritten. Optional numeric fields can be cleared; their native calculation/default behaviour is described in field help. Calculators only run when submitted.
 
 Results include readable summaries, engineering checks and warnings, calculation traces, and downloads for the result JSON, input case JSON, and summary CSV. Input and routing changes require another calculation; older results are not presented as current. Condenser, PHE, Evaporator, Regenerator, and Bell–Delaware Shell and Tube use real adapters; the remaining fin-tube placeholder group do not produce numerical designs in the UI. Native engineering calculations are unchanged.
 
 See [the UI guide](docs/STREAMLIT_UI.md) for input handling and limits. UI interactions are tested with Streamlit AppTest as part of `python -m unittest discover -s tests -v`.
+
+## Ready-to-run JSON examples
+
+The central [`examples/`](examples/README.md) folder contains sizing/rating and configuration-specific cases for all integrated groups, plus a clearly marked diagnostic case and a routing-only example for the remaining placeholder. Run `python run_examples.py` to execute and verify them. See `examples/test_report.json` for the latest outcomes and `tmp/example_results/` for the complete solver responses. These example checks also run in the regular test suite.
 
 ## Current contents and audit
 

@@ -1,0 +1,52 @@
+{
+  "routing": {
+    "module": "MOD-PHE",
+    "subtype": "Welded-Or-Brazed-PHE",
+    "Q1": "Q1-SENSIBLE",
+    "Q2": "Q2-LIQ-LIQ",
+    "Q3": "Q3-MED-P",
+    "Q4": "Q4-ELEV-T",
+    "Q5": "Q5-CLEAN",
+    "Q6": "Q6-LEAK-OK",
+    "Q7": "Q7-TIGHT",
+    "Q9": "Q9-LOW-VISC",
+    "Q10": "Q10-COMPACT-CAPEX",
+    "P_max_bar": 20,
+    "T_max_C": 200
+  },
+  "process": {
+    "hot": {
+      "name": "Example pressurized water",
+      "M": 10,
+      "T_in": 200,
+      "rho": 890,
+      "cp": 4400,
+      "k": 0.67,
+      "mu": 0.00016,
+      "dp_allow": 100000,
+      "Rf": 0
+    },
+    "cold": {
+      "name": "Example pressurized water",
+      "M": 5,
+      "T_in": 120,
+      "T_out": 197,
+      "rho": 910,
+      "cp": 4300,
+      "k": 0.68,
+      "mu": 0.00018,
+      "dp_allow": 100000,
+      "Rf": 0
+    },
+    "plate": {
+      "L": 1.0,
+      "W": 0.25,
+      "b": 0.005,
+      "t": 0.0006,
+      "k_w": 17,
+      "beta": 30,
+      "d_port": 0.1,
+      "construction": "brazed"
+    }
+  }
+}
