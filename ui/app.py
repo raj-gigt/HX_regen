@@ -27,7 +27,6 @@ PRESETS = {
     "Plate heat exchanger": {"Q1": "Q1-SENSIBLE", "Q2": "Q2-LIQ-LIQ", "Q3": "Q3-MED-P", "Q4": "Q4-MOD-T", "Q5": "Q5-CLEAN", "Q6": "Q6-ZERO-LEAK-STD", "Q7": "Q7-MODERATE", "Q9": "Q9-LOW-VISC", "Q10": "Q10-COMPACT-CAPEX"},
     "Condenser": {"Q1": "Q1-COND", "Q3": "Q3-LOW-P", "Q4": "Q4-MOD-T", "Q5": "Q5-MODERATE", "Q6": "Q6-ZERO-LEAK-HAZ"},
     "Evaporator": {"Q1": "Q1-EVAP", "Q3": "Q3-LOW-P", "Q4": "Q4-MOD-T", "Q5": "Q5-CLEAN", "Q6": "Q6-LEAK-OK", "Q9": "Q9-LOW-VISC"},
-    "Falling-film evaporator rating": {"Q1": "Q1-EVAP", "Q3": "Q3-LOW-P", "Q4": "Q4-MOD-T", "Q5": "Q5-HEAVY", "Q6": "Q6-ZERO-LEAK-STD", "Q9": "Q9-LOW-VISC"},
     "Rotary regenerator": {"Q1": "Q1-SENSIBLE", "Q2": "Q2-GAS-GAS", "Q3": "Q3-LOW-P", "Q4": "Q4-HIGH-T", "Q5": "Q5-CLEAN", "Q6": "Q6-LEAK-OK", "Q7": "Q7-MODERATE", "Q10": "Q10-COMPACT-CAPEX"},
     "Fixed-bed regenerator": {"Q1": "Q1-SENSIBLE", "Q2": "Q2-GAS-GAS", "Q3": "Q3-LOW-P", "Q4": "Q4-VHIGH-T", "Q5": "Q5-CLEAN", "Q6": "Q6-LEAK-OK", "Q7": "Q7-MODERATE", "Q10": "Q10-COMPACT-CAPEX"},
 }
@@ -40,8 +39,6 @@ QUESTION_LABELS = {
 
 
 def seed_route(name):
-    if name == "Falling-film evaporator rating":
-        st.session_state["evap_mode"] = "rating"
     for key, options in OPTIONS.items():
         st.session_state["route_" + key] = PRESETS[name].get(key, options[0][0])
     st.session_state.pop("calculation", None)
@@ -149,9 +146,15 @@ def solver_form(decision, editor_slot):
         st.caption("Fluid properties and operating conditions are separate from the choice of calculation method.")
     elif module_id == "evaporator":
         mode = st.radio("Calculation mode", ["sizing", "rating"], format_func=str.title, horizontal=True, key="evap_mode")
-        equipment_options = {"falling_film": "Falling-film evaporator"} if decision.subtype == "Forced-Circulation-or-Falling-Film" else {
-            "kettle": "K-type reboiler", "horizontal_thermosyphon": "Horizontal thermosyphon", "vertical_thermosyphon": "Vertical thermosyphon"}
-        equipment = st.selectbox("Evaporator configuration", list(equipment_options), format_func=equipment_options.get, key="evap_equipment_" + str(decision.subtype))
+        equipment_options = {
+            "kettle": "K-type reboiler", "horizontal_thermosyphon": "Horizontal thermosyphon",
+            "vertical_thermosyphon": "Vertical thermosyphon",
+            "falling_film": "Falling-film evaporator rating" if mode == "rating" else "Falling-film evaporator",
+        }
+        default_equipment = "falling_film" if decision.subtype == "Forced-Circulation-or-Falling-Film" else "kettle"
+        equipment = st.selectbox("Evaporator configuration", list(equipment_options),
+                                 index=list(equipment_options).index(default_equipment),
+                                 format_func=equipment_options.get, key="evap_equipment_" + str(decision.subtype))
         st.caption("Edit the supplied fluid properties directly. Choosing a fluid label alone does not update the other property fields.")
     elif module_id == "bell_delaware_shell_and_tube_hx":
         st.caption("Bell–Delaware single-phase shell-and-tube design. Fluid properties are evaluated at mean stream temperatures; geometry, margins, and pressure-drop limits are editable below.")

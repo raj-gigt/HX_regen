@@ -51,11 +51,17 @@ class FallingFilmRatingTests(unittest.TestCase):
         self.assertEqual(result.errors, tuple(result.results['native_result']['errors']))
         self.assertTrue(any('Process flow' in error for error in result.errors))
 
-    def test_direct_workflow_manual_and_edited_json_rating(self):
+    def test_evaporator_configuration_manual_and_edited_json_rating(self):
         app = AppTest.from_file(str(ROOT / 'streamlit_app.py'), default_timeout=60).run()
-        app.selectbox(key='scenario').select('Falling-film evaporator rating').run()
+        self.assertNotIn('Falling-film evaporator rating', app.selectbox(key='scenario').options)
+        app.selectbox(key='scenario').select('Evaporator').run()
         next(item for item in app.button if item.label == 'Use workflow').click().run()
         self.assertFalse(app.exception)
+        app.radio(key='evap_mode').set_value('rating').run()
+        configuration = next(item for item in app.selectbox if item.label == 'Evaporator configuration')
+        self.assertIn('Falling-film evaporator rating', configuration.options)
+        configuration.select('falling_film').run()
+        self.assertEqual(app.selectbox(key='scenario').value, 'Evaporator')
         self.assertEqual(app.radio(key='evap_mode').value, 'rating')
         self.assertEqual(next(item for item in app.selectbox if item.label == 'Evaporator configuration').value, 'falling_film')
         next(item for item in app.button if item.label == 'Calculate').click().run()

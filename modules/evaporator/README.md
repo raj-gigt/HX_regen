@@ -4,7 +4,7 @@ The central terminal application invokes the submitted sizing and rating compute
 
 After routing selects the Evaporator group, choose sizing or rating, choose an available equipment configuration, and provide a JSON case path. Use the sizing cases in `examples/sizing/` or rating cases in `examples/rating/` as supplied. The JSON's `equipment_key`, optional `calculation_type`, and `inputs` object must match the terminal selections. Relative case paths are resolved from the directory where the application is launched.
 
-The routing branch `Forced-Circulation-or-Falling-Film` has only the Falling-film option because no forced-circulation solver was supplied. The other Evaporator branch offers K-type, horizontal thermosyphon, and vertical thermosyphon configurations. This selection does not alter routing rules.
+The CLI follows the routing subtype: `Forced-Circulation-or-Falling-Film` offers Falling-film because no forced-circulation solver was supplied; the other branch offers K-type and both thermosyphons. In HX Studio, all four configurations are available under the single **Evaporator** workflow, with the routed subtype providing the default. Explicit configuration selection does not change questionnaire answers or routing rules.
 
 Solver output is retained in `ModuleResult.results["native_result"]`; solver warnings are copied to common warnings, and solver errors produce common execution status `failed` while the complete native result remains available. Native dictionaries contain outputs, checks, warnings, errors, traces, and source registers. The adapter does not write solver reports to files.
 
@@ -14,7 +14,7 @@ The supplied example cases are smoke-test inputs, not engineering-validated desi
 
 ## Falling-film rating in HX Studio
 
-Select **Falling-film evaporator rating** in the sidebar and click **Use workflow**. This selects the existing falling-film routing branch and Rating mode. Use the manual process/geometry forms, or choose **JSON files** and select `evaporator/rating/falling_film.json`. The JSON library also activates the correct route and rating mode directly. Calculate displays rated duty, vapour generation, installed area, heat-transfer coefficients, wetting/dry-out screens, checks and the complete native response; downloads use the common result interface.
+Select **Evaporator** in the sidebar and click **Use workflow**. Choose **Rating** as the calculation mode, then **Falling-film evaporator rating** in **Evaporator configuration**. Falling-film sizing is available in Sizing mode through the same configuration dropdown. Use the manual process/geometry forms, or choose **JSON files** and select `evaporator/rating/falling_film.json`. The JSON library also activates the correct route and rating mode directly. Calculate displays rated duty, vapour generation, installed area, heat-transfer coefficients, wetting/dry-out screens, checks and the complete native response; downloads use the common result interface.
 
 The root-level `evaporator_rating_modules` submission was checked against all four active rating scripts: every Python file is byte-for-byte identical. The active falling-film implementation is `rating/falling_film_rating.py`, invoked by `adapter.py` as `_compute_rating`; the app does not import from the root submission folder. Its supplied README, dependency list, Kern chart image, digitisation notes, and pressure-drop implementation notes are now included alongside the active scripts in `rating/`. Source scripts and correlations remain unchanged.
 
